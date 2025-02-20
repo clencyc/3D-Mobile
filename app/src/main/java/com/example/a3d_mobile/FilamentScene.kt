@@ -8,12 +8,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.a3d_mobile.utils.loadGLB
+import com.example.a3d_mobile.utils.GLBLoader
 import com.google.android.filament.*
 import com.google.android.filament.gltfio.*
 
 @Composable
-fun FilamentScene(modifier: Modifier = Modifier, resId: Int) {
+fun FilamentScene(modifier: Modifier = Modifier, resId: Int, glbLoader: GLBLoader) {
     val context = LocalContext.current
     val engine = remember { Engine.create() }
     val renderer = remember { engine.createRenderer() }
@@ -36,7 +36,13 @@ fun FilamentScene(modifier: Modifier = Modifier, resId: Int) {
     camera.lookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
     // Add the camera to the scene
     scene.addEntity(cameraEntity)
-
+    fun loadGLB(resId: Int) {
+        val buffer = glbLoader.loadGLB(resId)
+        asset = assetLoader.createAssetFromBinary(buffer)
+        asset?.let {
+            scene.addEntities(it.entities)
+        }
+    }
 
     loadGLB(resId)
 
@@ -101,4 +107,9 @@ fun FilamentScene(modifier: Modifier = Modifier, resId: Int) {
             engine.destroy()
         }
     }
+}
+
+private fun setupCamera(camera: Camera, width: Int, height: Int) {
+    camera.lookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+    camera.setProjection(45.0, width.toDouble() / height, 0.1, 10000.0, Camera.Fov.VERTICAL)
 }
