@@ -15,6 +15,8 @@ import com.google.android.filament.gltfio.*
 @Composable
 fun FilamentScene(modifier: Modifier = Modifier, resId: Int, glbLoader: GLBLoader) {
     val context = LocalContext.current
+
+    System.loadLibrary("filament")
     val engine = remember { Engine.create() }
     val renderer = remember { engine.createRenderer() }
     val scene = remember { engine.createScene() }
@@ -27,6 +29,7 @@ fun FilamentScene(modifier: Modifier = Modifier, resId: Int, glbLoader: GLBLoade
     var asset: FilamentAsset? = null
     val choreographer = remember { Choreographer.getInstance() }
     var frameCallback: Choreographer.FrameCallback? = null
+
 
     // Set up the view
     view.scene = scene
